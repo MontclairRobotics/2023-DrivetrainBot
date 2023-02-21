@@ -58,6 +58,6 @@ public final class MathUtils
      */
     public static double powsign(double x, double y)
     {
-        return signof(x).value * Math.pow(Math.abs(x), y);
+        return signof(x).sign * Math.pow(Math.abs(x), y);
     }
 }

@@ -14,7 +14,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Data;
 import frc.robot.framework.frc.Sendables;
 import frc.robot.framework.frc.commands.ManagerBase;
 import frc.robot.structure.DetectedBall;

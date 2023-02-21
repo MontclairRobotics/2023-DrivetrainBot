@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
-import edu.wpi.first.util.sendable.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.framework.frc.AutoCommands;
@@ -72,38 +71,19 @@ public final class Data
     }
     private static void setupDebugTab()
     {
-        distanceToTarget = debugTab.add("Distance to Target", 0)
-            .withWidget(BuiltInWidgets.kGraph)
-            .withPosition(0, 0)
-            .withSize(3, 3)
-            .getEntry();
-        angleToTarget = debugTab.add("Angle to Target", 0)
-            .withWidget(BuiltInWidgets.kGraph)
-            .withPosition(0+3, 0)
-            .withSize(3, 3)
-            .getEntry();
 
         var drive = debugTab.getLayout("Drive", BuiltInLayouts.kList)
             .withPosition(0+3+3, 0)
             .withSize(1, 2);
 
-        driveMode = drive.add("Drive Mode", "[normal]").getEntry();
-        driveSpeed = drive.add("Drive Speed", 0).getEntry();
-        drive.addNumber("Distace Travelled", RapidReact.drivetrain::getAverageDistance);
-
         var turn = debugTab.getLayout("Turn", BuiltInLayouts.kList)
             .withPosition(0+3+3+1, 0)
             .withSize(1, 2);
 
-        turnSpeed = turn.add("Turn Speed", 0).getEntry();
-        turnMode = turn.add("Turn Mode", "[normal]").getEntry();
 
         var ball = debugTab.getLayout("Ball", BuiltInLayouts.kList)
             .withPosition(0+3+3+1+1, 0)
             .withSize(1, 2);
-        
-        angleToBall = ball.add("Angle to Selected", 0).getEntry();
-        ballArea = ball.add("Area of Selected", 0).getEntry();
         
         debugTab.add("Auto", AutoCommands.chooser())
             .withWidget(BuiltInWidgets.kComboBoxChooser)

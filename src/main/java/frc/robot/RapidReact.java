@@ -27,13 +27,7 @@ import frc.robot.framework.frc.vendors.rev.BlinkinLEDDriver;
 import frc.robot.framework.math.MathUtils;
 import frc.robot.managers.NavxManager;
 import frc.robot.managers.VisionManager;
-import frc.robot.subsystems.Climber.ClimberSide;
-import frc.robot.subsystems.BallMover;
-import frc.robot.subsystems.BallShooter;
-import frc.robot.subsystems.BallSucker;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.RotationalClimber;
 
 import static frc.robot.Constants.*;
 import static frc.robot.framework.frc.commands.Commands.*;
@@ -73,10 +67,6 @@ public final class RapidReact extends RobotContainer
     // SUBSYSTEMS / MANAGERS
     ////////////////////////////////
     public static final Drivetrain drivetrain = new Drivetrain();
-    public static final BallSucker ballSucker = new BallSucker();
-    public static final BallMover ballMover = new BallMover();
-    public static final BallShooter ballShooter = new BallShooter();
-    public static final Climber climber = new Climber();
     //public static final RotationalClimber rotationalClimber = new RotationalClimber();
 
     public static final VisionManager vision = new VisionManager();
@@ -96,77 +86,7 @@ public final class RapidReact extends RobotContainer
     public void initialize()
     {
         // Smart dashboard
-        Data.setup();
         
-        // Intake
-        operatorController.getButton(X_SQUARE)
-            .whenActive(ballSucker::startSucking)
-            .whenInactive(ballSucker::stop)
-            .whileActiveContinuous(block(ballSucker));
-        // Reverse Intake
-        operatorController.getButton(B_CIRCLE)
-            .whenActive(ballSucker::startSucking)
-            .whenInactive(ballSucker::stop)
-            .whileActiveContinuous(block(ballSucker));
-
-        // Transport up
-        operatorController.getDPad(DPad.UP)
-            .whenActive(() -> {
-                ballMover.startMoving();
-                ballShooter.reverseShooting();
-            })
-            .whenInactive(() -> {
-                ballMover.stop();
-                ballShooter.stop();
-            })
-            .whileActiveContinuous(block(ballMover, ballShooter));
-        
-        // Transport down
-        operatorController.getDPad(DPad.DOWN)
-            .whenActive(ballMover::startMovingBackwards)
-            .whenInactive(ballMover::stop)
-            .whileActiveContinuous(block(ballMover));
-        
-        // Shooter command
-        operatorController.getButton(LEFT_BUMPER)
-            .toggleWhenActive(RapidReactCommands.shootSequence());
-
-        // Direct shooter
-        operatorController.getAxis(LEFT_TRIGGER)
-            .whenGreaterThan(0.5)
-            .whenActive(ballShooter::startShooting)
-            .whenInactive(ballShooter::stop)
-            .whileActiveContinuous(block(ballShooter));
-
-        // Reverse shooter
-        operatorController.getButton(RIGHT_BUMPER)
-            .whenActive(ballShooter::reverseShooting)
-            .whenInactive(ballShooter::stop)
-            .whileActiveContinuous(block(ballShooter));
-
-        // Climb up command
-        operatorController.getButton(Y_TRIANGLE)
-            .whenActive(() -> climber.startClimbing(ClimberSide.BOTH))
-            .whileActiveContinuous(block(climber))
-            .whenInactive(() -> climber.stop(ClimberSide.BOTH));
-        // Climb down command
-        operatorController.getButton(A_CROSS)
-            .whenActive(() -> climber.startReverseClimbing(ClimberSide.BOTH))
-            .whileActiveContinuous(block(climber))
-            .whenInactive(() -> climber.stop(ClimberSide.BOTH));
-        /*
-        // Rotational climber forward command
-        operatorController.getDPad(DPad.LEFT)
-            .whenActive(rotationalClimber::rotateForward)
-            .whileActiveContinuous(block(rotationalClimber))
-            .whenInactive(rotationalClimber::stop);
-        // Rotational climber backward command
-        operatorController.getDPad(DPad.RIGHT)
-            .whenActive(rotationalClimber::rotateBackward)
-            .whileActiveContinuous(block(rotationalClimber))
-            .whenInactive(rotationalClimber::stop);
-        */
-
         // Max speed command
         driverController.getButton(A_CROSS)
             .whenActive(drivetrain::nextDriveSpeed);
@@ -214,31 +134,7 @@ public final class RapidReact extends RobotContainer
         driverController.getDPad(DPad.DOWN)
             .toggleWhenActive(RapidReactCommands.turn(180));
 
-        // turn to ball
-        driverController.getAxis(LEFT_TRIGGER).whenGreaterThan(0.5)
-            .whenActive(drivetrain::startTargetingABall)
-            .whenInactive(drivetrain::stopTargetingABall); 
         
-        // CLIMBER BACKUPS
-        //*/
-        operatorController.getAxis(LEFT_Y).whenGreaterThan(0.5)
-            .whenActive(() -> climber.startClimbing(ClimberSide.LEFT))
-            .whileActiveContinuous(block(climber))
-            .whenInactive(() -> climber.stop(ClimberSide.LEFT));
-        operatorController.getAxis(LEFT_Y).whenLessThan(-0.5)
-            .whenActive(() -> climber.startReverseClimbing(ClimberSide.LEFT))
-            .whileActiveContinuous(block(climber))
-            .whenInactive(() -> climber.stop(ClimberSide.LEFT));
-        
-        operatorController.getAxis(RIGHT_Y).whenGreaterThan(0.5)
-            .whenActive(() -> climber.startClimbing(ClimberSide.RIGHT))
-            .whileActiveContinuous(block(climber))
-            .whenInactive(() -> climber.stop(ClimberSide.RIGHT));
-        operatorController.getAxis(RIGHT_Y).whenLessThan(-0.5)
-            .whenActive(() -> climber.startReverseClimbing(ClimberSide.RIGHT))
-            .whileActiveContinuous(block(climber))
-            .whenInactive(() -> climber.stop(ClimberSide.RIGHT));
-        //*/    
 
         // PID straight angle command: TELEOP ONLY
         driverController.getAxis(RIGHT_X).abs()
@@ -258,231 +154,7 @@ public final class RapidReact extends RobotContainer
                 ),
                 instant(drivetrain::stopStraightPidding)
             ));
-        
-        /////////////////////////////////
-        /// AUTO
-        /////////////////////////////////
-        AutoCommands.add(
-            "Drive (2.5 sec)", 
-            () -> RapidReactCommands.driveForTime(2.5, 1)
-        );
-        AutoCommands.add(
-            "Drive (6 ft)",
-            () -> RapidReactCommands.driveDistance(6 * 12)
-        );
-        AutoCommands.add(
-            "Turn (left 90 degrees)",
-            () -> RapidReactCommands.turn(-90)
-        );
-        AutoCommands.add(
-            "Turn (180 degrees)",
-            () -> RapidReactCommands.turn(180)
-        );
 
-        AutoCommands.add(
-            "Shoot Test",
-            () -> RapidReactCommands.shootSequence()
-        );
-        AutoCommands.add(
-            "Shoot",
-            () -> RapidReactCommands.shootSequenceShort()
-        );
-
-        final double ballDistance = 92; //in
-        final double ballPidLeadIn = 50; //in
-        final double ballStartSpeed = 0.5; 
-        final double ballPidTime = 1.5; //sec
-        final double ballPidOutput = 0.4; // (speed while ball pidding)
-        final double returnTime = 2.0;
-        final double ballTransportTime = 0.7; //sec
-        final double taxiTime = 3; //sec
-        final double preShootTime = 0.7; //sec
-
-        AutoCommands.add(
-            "Taxi",
-            () -> RapidReactCommands.driveForTime(taxiTime, 1)
-        );
-
-        AutoCommands.add(
-            "Single Ball",
-            () -> sequence(
-                // Shoot ball
-                AutoCommands.get("Shoot"),
-                AutoCommands.get("Taxi")
-            )
-        );
-
-        AutoCommands.add(
-            "Get 3 Balls",
-            () -> parallel(
-                sequence(
-                    // Shoot ball
-                    AutoCommands.get("Shoot"),
-
-                    // Go to where it needs to go
-                    RapidReactCommands.driveDistance(40),
-
-                    // Angle pid
-                    //RapidReactCommands.turn(() -> -navx.getAngle()), // undo the ball pidding that was done
-                    RapidReactCommands.turn(145), // turn the degrees to ball
-
-                    // Go to balls 
-                    instant(navx::zeroYaw),
-                    instant(ballSucker::startSucking),
-                    instant(ballMover::startMoving),
-                    instant(drivetrain::startTargetingABall),
-
-                    // undo the ball pidding
-                    RapidReactCommands.turn(() -> -navx.getAngle()),
-                    // waitFor(ballTransportTime),
-                    // instant(ballMover::stop),
-                    // instant(ballSucker::stop)
-                    RapidReactCommands.driveDistance(250),
-                    instant(ballSucker::stop),
-                    instant(ballMover::stop),
-                    instant(drivetrain::stopTargetingABall)
-                ),
-                block(ballSucker, ballMover, ballShooter)
-            )
-        );
-
-        AutoCommands.add(
-            "Return (Shoot 3)",
-            () -> parallel(
-                sequence(
-                    RapidReactCommands.driveDistance(-250),
-
-                    RapidReactCommands.turn(-145),
-
-                    RapidReactCommands.driveDistance(40),
-
-                    AutoCommands.get("Shoot")
-                ) //later
-            )
-        );
-
-        AutoCommands.add(
-            "Main 3 Ball",
-            () -> sequence(
-                AutoCommands.get("Get 3 Balls"),
-                AutoCommands.get("Return (Shoot 3)")
-            )
-        );
-
-        AutoCommands.add(
-            "Main (late angle pid)",
-            () -> sequence(
-                // Shoot ball
-                AutoCommands.get("Shoot"),
-
-                // Retreive next ball
-                instant(drivetrain::resetEncoders),
-                instant(() -> drivetrain.set(ballStartSpeed, 0)),
-                waitUntil(() -> drivetrain.getAverageDistance() >= ballDistance - ballPidLeadIn),
-
-                instant(drivetrain::startTargetingABall),
-                instant(ballSucker::startSucking),
-                RapidReactCommands.driveForTime(ballPidTime, ballPidOutput),
-                instant(drivetrain::stopTargetingABall),
-                instant(ballSucker::stop),
-
-                // Return 
-                race(
-                    parallel(
-                        sequence(
-                            instant(ballSucker::startSucking),
-                            instant(ballMover::startMoving),
-                            waitFor(ballTransportTime),
-                            instant(ballMover::stop),
-                            instant(ballSucker::stop)
-                        ),
-                        RapidReactCommands.driveForTime(returnTime, -0.75)
-                    ),
-                    RapidReactCommands.turn(() -> -navx.getAngle())
-                ),
-                waitFor(1),
-                RapidReactCommands.driveForTime(preShootTime, 0.5),
-
-                // Shoot ball (long this time)
-                RapidReactCommands.shootSequence()
-            )
-        );
-
-        AutoCommands.add(
-            "Main",
-            () -> sequence(
-                // Shoot ball
-                AutoCommands.get("Shoot"),
-
-                // Retreive next ball
-                instant(drivetrain::resetEncoders),
-                instant(() -> drivetrain.set(ballStartSpeed, 0)),
-                waitUntil(() -> drivetrain.getAverageDistance() >= ballDistance - ballPidLeadIn),
-
-                instant(drivetrain::startTargetingABall),
-                instant(ballSucker::startSucking),
-                RapidReactCommands.driveForTime(ballPidTime, ballPidOutput),
-                instant(drivetrain::stopTargetingABall),
-                instant(ballSucker::stop),
-
-                // Angle pid
-                RapidReactCommands.turn(() -> -navx.getAngle()),
-
-                // Return 
-                parallel(
-                    sequence(
-                        instant(ballSucker::startSucking),
-                        instant(ballMover::startMoving),
-                        waitFor(ballTransportTime),
-                        instant(ballMover::stop),
-                        instant(ballSucker::stop)
-                    ),
-                    RapidReactCommands.driveForTime(returnTime, -0.75)
-                ),
-                waitFor(1),
-
-                // Shoot ball (long this time)
-                RapidReactCommands.shootSequence()
-            )
-        );
-        
-        AutoCommands.add(
-            "Nothing",
-            () -> instant(() -> {})
-        );
-
-        // EXPIREMENTAL AUTOS
-        /*
-        AutoCommands.add(
-            "Drive Intake",
-            () -> sequence(
-                instant(() -> ballSucker.startSucking()),
-                AutoCommands.get("Drive"),
-                instant(() -> ballSucker.stop())
-            )
-        );
-        AutoCommands.add(
-            "Drive Return",
-            () -> RapidReactCommands.driveForTime(2.5, -.5)
-        );
-        AutoCommands.add(
-            "Main Taxi Intake",
-            () -> sequence(
-                AutoCommands.get("Shoot"),
-                AutoCommands.get("Drive Intake")
-            )
-        );
-        AutoCommands.add(
-            "Main Two Ball",
-            () -> sequence(
-                AutoCommands.get("Shoot"),
-                AutoCommands.get("Drive Intake"),
-                AutoCommands.get("Drive Return"),
-                AutoCommands.get("Shoot"),
-                AutoCommands.get("Drive")
-            )
-        ); 
-        */
 
         AutoCommands.setDefaultAutoCommand("Main");
     }

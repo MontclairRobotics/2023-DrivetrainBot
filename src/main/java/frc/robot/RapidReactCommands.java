@@ -2,10 +2,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.BallMover;
-import frc.robot.subsystems.BallShooter;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.BallSucker;
 
 import static edu.wpi.first.wpilibj2.command.CommandGroupBase.*;
 
@@ -17,43 +13,6 @@ import static frc.robot.framework.frc.commands.Commands.*;
 public final class RapidReactCommands
 {
     private RapidReactCommands() {}
-
-    public static Command shootSequenceBuilder(double shootTime)
-    {
-        return race(
-            sequence(
-                instant(() -> {
-                    ballMover.startMovingBackwards();
-                    ballShooter.reverseShooting();
-                    ballSucker.startSucking();
-                }),
-                waitFor(0.05),
-                instant(() -> {
-                    ballMover.stop();
-                    ballSucker.stop();
-                    ballShooter.startShooting();
-                }),
-                waitFor(0.2),
-                instant(() -> ballMover.startMoving()),
-                waitFor(shootTime),
-                instant(() -> {
-                    ballMover.stop();
-                    ballShooter.stop();
-                })
-            ),
-            block(ballMover, ballShooter, ballSucker)
-        );
-    }
-
-    public static Command shootSequence()
-    {
-        return shootSequenceBuilder(2);
-    }
-
-    public static Command shootSequenceShort()
-    {
-        return shootSequenceBuilder(1);
-    }
 
     public static Command turn(double degrees)
     {
@@ -73,40 +32,4 @@ public final class RapidReactCommands
         );
     }
 
-    public static Command driveForTime(double time, double percentOutput)
-    {
-        return sequence(
-            sequence(
-                instant(() -> {
-                    drivetrain.setMaxOutput(Constants.AUTO_SPEED);
-                    drivetrain.set(percentOutput, 0);
-                    drivetrain.startStraightPidding();
-                    //System.out.println("Start Driving");
-                }),
-                runForTime(time, block(drivetrain)),
-                instant(() -> {
-                    drivetrain.set(0, 0);
-                    drivetrain.stop();
-                    //**/drivetrain.stopStraightPidding();
-                    //System.out.println("Stop Driving");
-                })
-            )
-        );
-    }
-
-    public static Command driveDistance(double distance)
-    {
-        return sequence(
-            instant(() -> {
-                drivetrain.setMaxOutput(Constants.AUTO_SPEED);
-                drivetrain.setTargetDistance(distance);
-                drivetrain.startStraightPidding();
-            }),
-            runUntil(() -> drivetrain.reachedTargetDistance(), block(drivetrain)),
-            instant(() -> {
-                drivetrain.releaseDistanceTarget();
-                drivetrain.stop();
-            })
-        );
-    }
 }
