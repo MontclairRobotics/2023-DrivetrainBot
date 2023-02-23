@@ -23,12 +23,12 @@ public final class Constants
     // Left motor port numbers
     public static final int LEFT_MOTOR_1_PORT = 2; 
     public static final int LEFT_MOTOR_2_PORT = 4;
-    public static final int LEFT_MOTOR_3_PORT = 3; // this motor has ben commented out
+    // public static final int LEFT_MOTOR_3_PORT = 3; // this motor has ben commented out
 
     // Right motor port numbers
     public static final int RIGHT_MOTOR_1_PORT = 9; //2;
     public static final int RIGHT_MOTOR_2_PORT = 10; //3;
-    public static final int RIGHT_MOTOR_3_PORT = 11; //4; this motor has been commented out
+    // public static final int RIGHT_MOTOR_3_PORT = 11; //4; this motor has been commented out
 
     // Intake motor port number
     public static final int INTAKE_MOTOR_PORT = 1;

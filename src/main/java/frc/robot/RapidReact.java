@@ -67,7 +67,6 @@ public final class RapidReact extends RobotContainer
     // SUBSYSTEMS / MANAGERS
     ////////////////////////////////
     public static final Drivetrain drivetrain = new Drivetrain();
-    //public static final RotationalClimber rotationalClimber = new RotationalClimber();
 
     public static final VisionManager vision = new VisionManager();
     public static final NavxManager navx = new NavxManager(new AHRS());
@@ -155,6 +154,7 @@ public final class RapidReact extends RobotContainer
                 instant(drivetrain::stopStraightPidding)
             ));
 
+        AutoCommands.add("Main", () -> Commands.none());
 
         AutoCommands.setDefaultAutoCommand("Main");
     }

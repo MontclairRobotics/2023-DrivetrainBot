@@ -41,32 +41,32 @@ public final class Drivetrain extends ManagedSubsystemBase
     private final CANSparkMax 
         leftMotor1 = new CANSparkMax(LEFT_MOTOR_1_PORT, MotorType.kBrushless),
         leftMotor2 = new CANSparkMax(LEFT_MOTOR_2_PORT, MotorType.kBrushless),
-        leftMotor3 = new CANSparkMax(LEFT_MOTOR_3_PORT, MotorType.kBrushless),
+        // leftMotor3 = new CANSparkMax(LEFT_MOTOR_3_PORT, MotorType.kBrushless),
         rightMotor1 = new CANSparkMax(RIGHT_MOTOR_1_PORT, MotorType.kBrushless),
-        rightMotor2 = new CANSparkMax(RIGHT_MOTOR_2_PORT, MotorType.kBrushless),
-        rightMotor3 = new CANSparkMax(RIGHT_MOTOR_3_PORT, MotorType.kBrushless)
+        rightMotor2 = new CANSparkMax(RIGHT_MOTOR_2_PORT, MotorType.kBrushless)//,
+        // rightMotor3 = new CANSparkMax(RIGHT_MOTOR_3_PORT, MotorType.kBrushless)
     ;
     
     private final CANSparkMax[]
         leftMotors = {
             leftMotor1,
             leftMotor2,
-            leftMotor3
+            // leftMotor3
         },
         rightMotors = {
             rightMotor1, 
             rightMotor2,
-            rightMotor3
+            // rightMotor3
         }
     ;
 
     private final RelativeEncoder 
         leftEncoder1 = leftMotor1.getEncoder(),
         leftEncoder2 = leftMotor2.getEncoder(),
-        leftEncoder3 = leftMotor3.getEncoder(),
+        // leftEncoder3 = leftMotor3.getEncoder(),
         rightEncoder1 = rightMotor1.getEncoder(),
-        rightEncoder2 = rightMotor2.getEncoder(),
-        rightEncoder3 = rightMotor3.getEncoder()
+        rightEncoder2 = rightMotor2.getEncoder()//,
+        // rightEncoder3 = rightMotor3.getEncoder()
     ;
 
 
@@ -74,12 +74,12 @@ public final class Drivetrain extends ManagedSubsystemBase
         leftEncoders = {
             leftEncoder1,
             leftEncoder2,
-            leftEncoder3
+            // leftEncoder3
         },
         rightEncoders = {
             rightEncoder1, 
             rightEncoder2,
-            rightEncoder3
+            // rightEncoder3
         }
     ;
 
